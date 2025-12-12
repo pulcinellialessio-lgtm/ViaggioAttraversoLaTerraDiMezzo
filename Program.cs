@@ -26,13 +26,13 @@ namespace ViaggioControBowser
             Console.WriteLine("|                                          |");
             Console.WriteLine(" ------------------------------------------");
 
-            string personaggi = Console.ReadLine();
+            string personaggi = Convert.ToString(Console.ReadLine());
 
             Console.WriteLine("Sei nei panni di " + personaggi + ", devi riuscire ad arrivare alla fortezza di Bowser (Bowser's kingdom) e salvare la principessa Peach. Qusto viaggio non sarà facile, ci saranno imprevisti nel mezzo del viaggio che potranno cambiare le sorti dell'avventura, ad accompagnarti c'è cappy, un'alleato di mario che permette a lui di possedere personaggi, nemici e oggetti. Quindi detto ciò buona fortuna...");
 
             return personaggi;
         }
-        static int TurnoDiGioco() //Menu delle azioni
+        static int TurnoDiGioco(int Vita, int Attacco, string personaggi, int PozioneCura, int cavalcatura, int fioreDiFuoco) //Menu delle azioni
         {
             Console.WriteLine(" -------------------------------------");
             Console.WriteLine("|   Cosa vuoi fare?                   |");
@@ -45,9 +45,11 @@ namespace ViaggioControBowser
 
             int scelta = Convert.ToInt32(Console.ReadLine());
 
+            Azione(scelta, Vita, Attacco, personaggi, PozioneCura, cavalcatura, fioreDiFuoco);
+
             return scelta;
         }
-        static void Azione(int scelta, int Vita, int Attacco, string personaggi, int pozioneCura, int cavalcatura, int fioreDiFuoco)
+        static void Azione(int scelta, int Vita, int Attacco, string personaggi, int PozioneCura, int cavalcatura, int fioreDiFuoco)
         {
             if(scelta == 1)
             {
@@ -61,12 +63,12 @@ namespace ViaggioControBowser
             else if(scelta == 3)
             {
                 Console.WriteLine("Hai scelto di mostrare l'inventario di Mario");
-                InventarioPersonaggio(pozioneCura, cavalcatura, fioreDiFuoco);
+                InventarioPersonaggio(PozioneCura, cavalcatura, fioreDiFuoco);
             }
             else if(scelta == 4)
             {
                 Console.WriteLine("Hai scelto di usare un oggetto");
-                UsaOggetto(pozioneCura, Vita, Attacco, fioreDiFuoco, cavalcatura);
+                UsaOggetto(PozioneCura, Vita, Attacco, fioreDiFuoco, cavalcatura);
             }
             else if(scelta == 5)
             {
@@ -409,18 +411,19 @@ namespace ViaggioControBowser
                 }
             }
         }
-        static void BoscoSolitario(string personaggio, int Vita, int Attacco, int PozioneCura)
+        static void BoscoSolitario(string personaggi, int Vita, int Attacco, int PozioneCura, int cavalcature)
         {
             Console.WriteLine("Dopo un viaggio abbastanza lungo, arrivi nel Regno del Bosco Solitario, un luogo dove la natura e la tecnologia si fondono in un modo sorprendente. Per continuare il viaggio la Odissey ha bisogno di energia, trova le tre lune di energia e potenzia la Odissey.");
-            Console.WriteLine(personaggio + ": Mamma mia! Che posto! Sembra... una foresta in cui ha vissuto un robot gigante!");
-            Console.WriteLine(personaggio + ": Guarda Cappy, gli alberi sono fatti di legno, ma anche di tubi! E che strano silenzio... meglio tenere gli occhi aperti. Non mi fido di una foresta così perfetta.");
-            Console.WriteLine(personaggio + ": Dobbiamo trovare la Luna di Energia! Sento che è nascosta da qualche parte... tra le foglie o forse... sotto una di quelle piattaforme! Andiamo!");
+            Console.WriteLine(personaggi + ": Mamma mia! Che posto! Sembra... una foresta in cui ha vissuto un robot gigante!");
+            Console.WriteLine(personaggi + ": Guarda Cappy, gli alberi sono fatti di legno, ma anche di tubi! E che strano silenzio... meglio tenere gli occhi aperti. Non mi fido di una foresta così perfetta.");
+            Console.WriteLine(personaggi + ": Dobbiamo trovare la Luna di Energia! Sento che è nascosta da qualche parte... tra le foglie o forse... sotto una di quelle piattaforme! Andiamo!");
 
             string[] BoscoSolitario = { "VermeElettrico", "Piranha", "Mega pianta Piranha" };
 
             Random rand = new Random();
+            Random Fuga = new Random();
 
-            int VermeElettricoVita = 4, VermeElettricoAttacco = 1, PiranhaVita = 6, PiranhaAttacco = 1, MegaPiantaPiranhaVita = 8, MegaPiantaPiranhaAttacco = 2;
+            int VermeElettricoVita = 4, VermeElettricoAttacco = 1, PiranhaVita = 6, PiranhaAttacco = 1, TopperVita = 8, TopperAttacco = 2;
 
             for (int i = 0; i < BoscoSolitario.Length; i++)
             {
@@ -438,7 +441,7 @@ namespace ViaggioControBowser
                             Console.WriteLine("Non sei riuscito ad attaccare il VermeElettrico, ora lui ti ha attaccato e ti ha inflitto " + VermeElettricoAttacco + " danni! Premi un tasto per continuare...");
                             Console.ReadLine();
                             Vita -= VermeElettricoAttacco;
-                            StatusPersonaggio(Vita, Attacco, personaggio);
+                            StatusPersonaggio(Vita, Attacco, personaggi);
                             Console.WriteLine("La vita del VermeElettrico è: " + VermeElettricoVita);
 
                             if (Vita <= 0)
@@ -453,7 +456,7 @@ namespace ViaggioControBowser
                             Console.WriteLine("Sei riuscito ad attaccare il VermeElettrico, gli hai inflitto " + Attacco + " danni! Premi un tato per continuare...");
                             Console.ReadLine();
                             VermeElettricoVita -= Attacco;
-                            StatusPersonaggio(Vita, Attacco, personaggio);
+                            StatusPersonaggio(Vita, Attacco, personaggi);
                             Console.WriteLine("La vita del VermeElettrico è: " + VermeElettricoVita);
 
                             if (Vita <= 0)
@@ -467,87 +470,408 @@ namespace ViaggioControBowser
                     Console.WriteLine("Sei riuscito a stordire il VermeElettrico! Come ricompensa per la tua vittoria, ottieni una Pozione Cura!");
 
                     PozioneCura++;
-
-                    Console.WriteLine("Ora che il VermeElettrico è stordito puoi usare cappy per possederlo e riuscirai a passare inosservato inmezzo a tutti gli altri vermi elettrici");
                 }
                 else if (i == 1)//Piranha
                 {
+                    Console.WriteLine("Proseguendo nel tuo cammino alla ricerca delle lune, vieni attaccato da una Piranha! Una pianta carnivora meccanica che difende gelosamente il territorio. Attaccala per continuare il viaggio con probabile ricompensa oppuna non rischi e provi a fuggire via?.");
+                    Console.WriteLine(" Cosa scegli di fare? ");
+                    Console.WriteLine(" 1: Affrontare il Dinosauro, con possibile ricompensa ");
+                    Console.WriteLine(" 2: Fuggire via dalla via di fuga senza prendere rischi ");
+                    string scelta = Console.ReadLine();
+
+                    if (scelta == "1")
+                    {
+                        Console.WriteLine("Hai deciso di affrontare il Dinosauro!");
+
+                        while (PiranhaVita > 0)
+                        {
+                            int TiroDado = rand.Next(1, 7);
+
+                            if (TiroDado <= 2)
+                            {
+                                Console.WriteLine("Valore tiro dado: " + TiroDado);
+                                Console.WriteLine("Non sei riuscito ad attaccare il Piranha, ora lui ti ha attaccato e ti ha inflitto " + PiranhaAttacco + " danni! Premi un tasto per continuare...");
+                                Console.ReadLine();
+                                Vita -= PiranhaAttacco;
+                                StatusPersonaggio(Vita, Attacco, personaggi);
+                                Console.WriteLine("La vita di Piranha è: " + PiranhaVita);
+
+                                if (Vita <= 0)
+                                {
+                                    Console.WriteLine("GAME OVER. Sei stato sconfitto da Piranha, il tuo viaggio finisce qui...                                     Riprovi?");
+                                    Environment.Exit(0);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Valore tiro dado: " + TiroDado);
+                                Console.WriteLine("Sei riuscito ad attaccare il Piranha, gli hai inflitto " + Attacco + " danni! Premi un tato per continuare...");
+                                Console.ReadLine();
+                                PiranhaVita -= Attacco;
+                                StatusPersonaggio(Vita, Attacco, personaggi);
+                                Console.WriteLine("La vita del Piranha è: " + PiranhaVita);
+
+                                if (Vita <= 0)
+                                {
+                                    Console.WriteLine("GAME OVER. Sei stato sconfitto da Piranha, il tuo viaggio finisce qui...                                     Riprovi?");
+                                    Environment.Exit(0);
+                                }
+                            }
+                        }
+
+                        Console.WriteLine("Sei riuscito a stordire il Piranha! Come ricompensa per la tua vittoria, ottieni l'altra metà di cavalcatura, questa ti permette di poter viaggiare piu velocemente tra i vari mondi aumentando di 1 il valore del dado.");
+
+                        cavalcature++;
+
+                        Console.WriteLine("Ora che il Piranha è stordito puoi continuare il tuo viaggio alla ricerca delle lune.");
+                    }
+                    else if (scelta == "2")//fuga Piranha
+                    {
+                        Console.WriteLine("Hai deciso di fuggire via dalla via di fuga!");
+                        Console.WriteLine("Puoi fuggire via solo se otterrai un valore superiore a 75 nel tiro del dado!");
+
+                        int TiroDadoFuga = Fuga.Next(1, 101);
+
+                        if (TiroDadoFuga > 75)
+                        {
+                            Console.WriteLine("Valore tiro dado fuga: " + TiroDadoFuga);
+                            Console.WriteLine("Sei riuscito a fuggire via da Piranha utilizzando la via di fuga!");
+
+                        }
+                        else
+                        {
+                            Console.WriteLine("Valore tiro dado fuga: " + TiroDadoFuga);
+                            Console.WriteLine("Non sei riuscito a fuggire via da Piranha, ti ha catturato. Prova ad attaccarlo!");
+
+                            while (PiranhaVita > 0)
+                            {
+                                int TiroDado2 = rand.Next(1, 7);
+
+                                if (TiroDado2 <= 2)
+                                {
+                                    Console.WriteLine("Valore tiro dado: " + TiroDado2);
+                                    Console.WriteLine("Non sei riuscito ad attaccare il Piranha, ora lui ti ha attaccato e ti ha inflitto " + PiranhaAttacco + " danni! Premi un tasto per continuare...");
+                                    Console.ReadLine();
+                                    Vita -= PiranhaAttacco;
+                                    StatusPersonaggio(Vita, Attacco, personaggi);
+                                    Console.WriteLine("La vita del Piranha è: " + PiranhaVita);
+
+                                    if (Vita <= 0)
+                                    {
+                                        Console.WriteLine("GAME OVER. Sei stato sconfitto da Piranha, il tuo viaggio finisce qui...                                     Riprovi?");
+                                        Environment.Exit(0);
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Valore tiro dado: " + TiroDado2);
+                                    Console.WriteLine("Sei riuscito ad attaccare il Piranha, gli hai inflitto " + Attacco + " danni! Premi un tasto per continuare...");
+                                    Console.ReadLine();
+                                    PiranhaVita -= Attacco;
+                                    StatusPersonaggio(Vita, Attacco, personaggi);
+                                    Console.WriteLine("La vita di Piranha è: " + PiranhaVita);
+
+                                    if (Vita <= 0)
+                                    {
+                                        Console.WriteLine("GAME OVER. Sei stato sconfitto da Piranha, il tuo viaggio finisce qui...                                     Riprovi?");
+                                        Environment.Exit(0);
+                                    }
+                                }
+                            }
+
+                            Console.WriteLine("Sei riuscito a stordire il Piranha! Come ricompensa per la tua vittoria, ottieni l'altra metà di cavalcatura, questa ti permette di poter viaggiare piu velocemente tra i vari mondi aumentando di 1 il valore del dado.");
+
+                            cavalcature++;
+
+                            Console.WriteLine("Ora che il Piranha è stordito puoi continuare il tuo viaggio alla ricerca delle lune.");
+                        }
+                    }
 
                 }
-                else if (i == 2)//Mega pianta Piranha
+                else if (i == 2)//Topper
                 {
-                    Console.WriteLine("Dopo aver sconfitto il Piranha sali in cima all'osservatorio presente inmezzo alla mappa e incontri la Mega pianta Piranha che tiene custodite le lune di energia che propio ti servono. Sconfiggila in un duello e potrai ripartire per un nuovo mondo.");
+                    Console.WriteLine("Dopo aver sconfitto il Piranha sali in cima all'osservatorio presente inmezzo alla mappa e incontri Topper che tiene custodite le lune di energia che propio ti servono. Topper è il leader, scontroso e arrogante, dei Broodals, i conigli wedding planner di Bowser. Si distingue per il suo cappello a cilindro verde che utilizza come arma d'attacco e di difesa. Durante il combattimento, impila i suoi numerosi cappelli creando una torre instabile. Per sconfiggerlo, Mario deve Cap-turare il suo cappello per esporlo all'attacco.Sconfiggilo in un duello e potrai ripartire per un nuovo mondo.");
 
-                    while (MegaPiantaPiranhaVita > 0)
+                    while (TopperVita > 0)
                     {
                         int TiroDado = rand.Next(1, 7);
 
                         if (TiroDado <= 2)
                         {
                             Console.WriteLine("Valore tiro dado: " + TiroDado);
-                            Console.WriteLine("Non sei riuscito ad attaccare il VermeElettrico, ora lui ti ha attaccato e ti ha inflitto " + VermeElettricoAttacco + " danni! Premi un tasto per continuare...");
+                            Console.WriteLine("Non sei riuscito ad attaccare Topper, ora lui ti ha attaccato e ti ha inflitto " + TopperAttacco + " danni! Premi un tasto per continuare...");
                             Console.ReadLine();
-                            Vita -= MegaPiantaPiranhaAttacco;
-                            StatusPersonaggio(Vita, Attacco, personaggio);
-                            Console.WriteLine("La vita del VermeElettrico è: " + MegaPiantaPiranhaVita);
+                            Vita -= TopperAttacco;
+                            StatusPersonaggio(Vita, Attacco, personaggi);
+                            Console.WriteLine("La vita di Topper è: " + TopperVita);
 
                             if (Vita <= 0)
                             {
-                                Console.WriteLine("GAME OVER. Sei stato sconfitto dal VermeElettrico, il tuo viaggio finisce qui...                                     Riprovi?");
+                                Console.WriteLine("GAME OVER. Sei stato sconfitto da Topper, il tuo viaggio finisce qui...                                     Riprovi?");
                                 Environment.Exit(0);
                             }
                         }
                         else
                         {
                             Console.WriteLine("Valore tiro dado: " + TiroDado);
-                            Console.WriteLine("Sei riuscito ad attaccare il VermeElettrico, gli hai inflitto " + Attacco + " danni! Premi un tato per continuare...");
+                            Console.WriteLine("Sei riuscito ad attaccare il Topper, gli hai inflitto " + Attacco + " danni! Premi un tato per continuare...");
                             Console.ReadLine();
-                            MegaPiantaPiranhaVita -= Attacco;
-                            StatusPersonaggio(Vita, Attacco, personaggio);
-                            Console.WriteLine("La vita del VermeElettrico è: " + MegaPiantaPiranhaVita);
+                            TopperVita -= Attacco;
+                            StatusPersonaggio(Vita, Attacco, personaggi);
+                            Console.WriteLine("La vita del Topper è: " + TopperVita);
 
                             if (Vita <= 0)
                             {
-                                Console.WriteLine("GAME OVER. Sei stato sconfitto dal dinosauro, il tuo viaggio finisce qui...                                     Riprovi?");
+                                Console.WriteLine("GAME OVER. Sei stato sconfitto da Topper, il tuo viaggio finisce qui...                                     Riprovi?");
                                 Environment.Exit(0);
                             }
                         }
                     }
 
-                    Console.WriteLine("Sei riuscito a sconfiggere la Mega pianta Piranha! Puoi andare tranquillamente a prenderere le lune di energia e tornare alla Odissey.");
+                    Console.WriteLine("Sei riuscito a sconfiggere Topper! Puoi andare tranquillamente a prenderere le lune di energia e tornare alla Odissey.");
                 }
             }
             
         }
-        static void Viaggio(string[] Mappa)
+        static void Imprevisto(int Vita, int Attacco, string personaggi)
+        {
+            int TREXVita = 6, TREXAttacco = 2, PiranhaVita = 8, PiranhaAttacco = 2;
+            Console.WriteLine("Durante il viaggio verso il prossimo mondo, un'improvvisa tempesta cosmica scuote la Odissey, costringendo Mario a manovrare con abilità per evitare detriti spaziali e onde di energia instabile. Mentre la nave viene scossa, Mario si aggrappa saldamente a Cappy. Durante la tempesta la Odyssey si rompe e precipiti giu ad alte velocità, ma per fortuna l'impatto viene attutito da un gruppo di alberi. Quando esci dalla odissey ti ritrovi in un isola piena di dinosauri, la odissey è tutta a pezzi e sono sparsi su tutta l'isola. Recuperali e possiamo ripartire.");
+            Console.WriteLine("Devi trovare 3 pezzi della odissey per poter ripartire, buona fortuna!");
+            Console.WriteLine("Mario parte alla ricerca del primo pezzo della odissey... fino a quando non si accorge che un T-REX sta custodendo uno dei tre pezzi, prova ad avvicinarti e prenderlo senza farti vedere, se ti farai vedere dovrai combattere un duello.");
+            Console.WriteLine("Per riuscire a prendere il pezzo della odissey senza farti vedere dal T-REX devi totalizzare un punteggio maggiore di 75 nel tiro di un dado da 100.");
+
+            Random rand = new Random();
+            int TiroDadoStealt = rand.Next(1, 101);
+
+            if(TiroDadoStealt > 75)
+            {
+                Console.WriteLine("Valore tiro dado stealt: " + TiroDadoStealt);
+                Console.WriteLine("Sei riuscito a prendere il pezzo della odissey senza farti vedere dal T-REX! Ora prosegui nella ricerca degli altri pezzi.");
+            }
+            else
+            {
+                Console.WriteLine("Valore tiro dado stealt: " + TiroDadoStealt);
+                Console.WriteLine("Non sei riuscito a prendere il pezzo della odissey senza farti vedere dal T-REX, ora dovrai affrontarlo in un duello per riuscire a prendere il pezzo della odissey.");
+
+                while (TREXVita > 0)
+                {
+                    int TiroDado = rand.Next(1, 7);
+
+                    if (TiroDado <= 2)
+                    {
+                        Console.WriteLine("Valore tiro dado: " + TiroDado);
+                        Console.WriteLine("Non sei riuscito ad attaccare Topper, ora lui ti ha attaccato e ti ha inflitto " + TREXAttacco + " danni! Premi un tasto per continuare...");
+                        Console.ReadLine();
+                        Vita -= TREXAttacco;
+                        StatusPersonaggio(Vita, Attacco, personaggi);
+                        Console.WriteLine("La vita di Topper è: " + TREXVita);
+
+                        if (Vita <= 0)
+                        {
+                            Console.WriteLine("GAME OVER. Sei stato sconfitto da Topper, il tuo viaggio finisce qui...                                     Riprovi?");
+                            Environment.Exit(0);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Valore tiro dado: " + TiroDado);
+                        Console.WriteLine("Sei riuscito ad attaccare il Topper, gli hai inflitto " + Attacco + " danni! Premi un tato per continuare...");
+                        Console.ReadLine();
+                        TREXVita -= Attacco;
+                        StatusPersonaggio(Vita, Attacco, personaggi);
+                        Console.WriteLine("La vita del Topper è: " + TREXVita);
+
+                        if (Vita <= 0)
+                        {
+                            Console.WriteLine("GAME OVER. Sei stato sconfitto da Topper, il tuo viaggio finisce qui...                                     Riprovi?");
+                            Environment.Exit(0);
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine("Sei riuscito a sconfiggere il T-REX! Ora puoi prendere il pezzo della odissey che stava custodendo e proseguire nella ricerca degli altri pezzi.");
+            Console.ReadLine();
+            Console.WriteLine("Un'altro pezzo viene custodito da un gruppo di piranha meccaniche, dovrai combattere e sudare per prendere questo pezzo.");
+
+            while (PiranhaVita > 0)
+            {
+                int TiroDado = rand.Next(1, 7);
+
+                if (TiroDado <= 2)
+                {
+                    Console.WriteLine("Valore tiro dado: " + TiroDado);
+                    Console.WriteLine("Non sei riuscito ad attaccare il Piranha, ora lui ti ha attaccato e ti ha inflitto " + PiranhaAttacco + " danni! Premi un tasto per continuare...");
+                    Console.ReadLine();
+                    Vita -= PiranhaAttacco;
+                    StatusPersonaggio(Vita, Attacco, personaggi);
+                    Console.WriteLine("La vita di Piranha è: " + PiranhaVita);
+
+                    if (Vita <= 0)
+                    {
+                        Console.WriteLine("GAME OVER. Sei stato sconfitto da Piranha, il tuo viaggio finisce qui...                                     Riprovi?");
+                        Environment.Exit(0);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Valore tiro dado: " + TiroDado);
+                    Console.WriteLine("Sei riuscito ad attaccare il Piranha, gli hai inflitto " + Attacco + " danni! Premi un tato per continuare...");
+                    Console.ReadLine();
+                    PiranhaVita -= Attacco;
+                    StatusPersonaggio(Vita, Attacco, personaggi);
+                    Console.WriteLine("La vita del Piranha è: " + PiranhaVita);
+
+                    if (Vita <= 0)
+                    {
+                        Console.WriteLine("GAME OVER. Sei stato sconfitto da Piranha, il tuo viaggio finisce qui...                                     Riprovi?");
+                        Environment.Exit(0);
+                    }
+                }
+            }
+
+            Console.WriteLine("Sei riuscito a sconfiggere il gruppo di Piranha! Ora puoi prendere il pezzo della odissey che stavano custodendo e proseguire nella ricerca dell'ultimo pezzo.");
+            Console.WriteLine("Mentre stai tornando alla odissey per ripararla, noti un bagliore tra gli alberi. Avvicinandoti, scopri che l'ultimo pezzo è rimasto tra un albero, per fortuna sei un bravo arrampicatore e quindi riesci a trovare tutti e tre i pezzi e dopo aver riparato la odissey ritorni in cammino verso il prossimo regno.");
+        }
+        static void NewDonkCity(string personaggi, int Vita, int Attacco, int PozioneCura)
+        {
+            int salti = 0, HarietVita = 8, HarietAttacco = 2;
+            Random rand = new Random();
+
+            Console.WriteLine("Dopo un lungo e turbolento viaggio, arrivi nel Regno di New Donk City, una metropoli vibrante e piena di vita, ispirata alle grandi città degli anni '30. Per continuare il viaggio la Odissey ha bisogno di energia, trova le tre lune di energia e potenzia la Odissey.");
+            Console.WriteLine(personaggi + "osserva con meraviglia l'architettura art déco degli edifici, le strade affollate di cittadini antropomorfi e l'atmosfera vivace che permea ogni angolo della città. Con Cappy al suo fianco, è pronto ad affrontare le sfide che lo attendono in questo regno urbano.");
+            Console.WriteLine("Esplorando la citta ti imbatti con donkey Kong che ti sfida in una gara di salto sui tetti per dimostrare la tua abilità e ottenere una delle lune di energia necessarie per potenziare la Odissey. Accetti la sfida e ti prepari a saltare da un tetto all'altro, cercando di evitare ostacoli (1) oppure ti concentri a trovare le tre lune (2)?.");
+            int scelta = Convert.ToInt32(Console.ReadLine());
+
+            if(scelta == 1)
+            {
+                Random rand1 = new Random();
+
+                Console.WriteLine("Hai deciso di affrontare la sfida di Donkey Kong!");
+                Console.WriteLine("Per vincere la gara devi fare almeno 3 ottimi salti di fila, un ottimo salto è se sul lancio di un dado farai sopra a 65. Buona fortuna!");
+
+                while(salti < 3)
+                {
+                    int TiroDadoSalto = rand1.Next(1, 101);
+                    if(TiroDadoSalto > 65)
+                    {
+                        salti++;
+                        Console.WriteLine("Valore tiro dado salto: " + TiroDadoSalto);
+                        Console.WriteLine("Ottimo salto! Hai fatto " + salti + " ottimi salti di fila.");
+                    }
+                    else
+                    {
+                        salti = 0;
+                        Console.WriteLine("Valore tiro dado salto: " + TiroDadoSalto);
+                        Console.WriteLine("Salto non riuscito! Devi ricominciare da capo.");
+                    }
+                }
+                Console.WriteLine("Dopo una gara intensa e piena di salti acrobatici, riesci a superare Donkey Kong e a ottenere la luna di energia! Donkey Kong, impressionato dalla tua abilità, ti consegna la luna con un sorriso amichevole e ti da anche una pozione di cura. Ora puoi continuare il tuo viaggio alla ricerca delle altre lune di energia per potenziare la Odissey.");
+                Console.WriteLine("Visto che hai vinto Donkey Kong ti dà un'indizio su dove trovare le altre lune, si trovano in cima all'Empire state building.");
+                PozioneCura++;
+            }
+            else if(scelta == 2)
+            {
+                Console.WriteLine("Hai deciso di concentrarti a trovare le tre lune!");
+            }   
+            
+            Console.WriteLine("Mentre esplori la città, noti l'Empire State Building che si erge maestoso tra gli altri grattacieli. Decidi di salire in cima per cercare le lune di energia.");
+            Console.WriteLine("Appena arrivato vedi subito le tre lune di energia, ma vieni respinto da Hariet, l'unico membro femminile del quartetto, usa bombe pirotecniche e indossa un abito rosa. Sconfiggila e prenditi le lune.");
+
+            while (HarietVita > 0)
+            {
+                int TiroDado = rand.Next(1, 7);
+
+                if (TiroDado <= 2)
+                {
+                    Console.WriteLine("Valore tiro dado: " + TiroDado);
+                    Console.WriteLine("Non sei riuscito ad attaccare il Hariet, ora lui ti ha attaccato e ti ha inflitto " + HarietAttacco + " danni! Premi un tasto per continuare...");
+                    Console.ReadLine();
+                    Vita -= HarietAttacco;
+                    StatusPersonaggio(Vita, Attacco, personaggi);
+                    Console.WriteLine("La vita di Hariet è: " + HarietVita);
+
+                    if (Vita <= 0)
+                    {
+                        Console.WriteLine("GAME OVER. Sei stato sconfitto da Hariet, il tuo viaggio finisce qui...                                     Riprovi?");
+                        Environment.Exit(0);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Valore tiro dado: " + TiroDado);
+                    Console.WriteLine("Sei riuscito ad attaccare Hariet, gli hai inflitto " + Attacco + " danni! Premi un tato per continuare...");
+                    Console.ReadLine();
+                    HarietVita -= Attacco;
+                    StatusPersonaggio(Vita, Attacco, personaggi);
+                    Console.WriteLine("La vita di Hariet è: " + HarietVita);
+
+                    if (Vita <= 0)
+                    {
+                        Console.WriteLine("GAME OVER. Sei stato sconfitto da Hariet, il tuo viaggio finisce qui...                                     Riprovi?");
+                        Environment.Exit(0);
+                    }
+                }
+            }
+            Console.WriteLine("Sei riuscito a sconfiggere Hariet! Ora puoi prendere le lune di energia e tornare alla Odissey.");
+        }
+        static void Viaggio(string[] Mappa)//descrizioni viaggio
         {
             if(Mappa[1] == "viaggio")
             {
                 Console.WriteLine("Mario dall'oblò della sua Odissey vede allontanarsi una terra preistorica, dove un'enorme cascata ruggisce su piattaforme rocciose e dove i resti fossilizzati di un T-Rex gigantesco giacciono tra l'erba. La terra è primitiva, ma allo stesso tempo rigogliosa e vivace.");
             }
-            else if(Mappa[3] == "viaggio")
+            else if (Mappa[2] == "viaggio")
+            {
+                Console.WriteLine("Dall’oblò della Odyssey, Mario osserva i regni trasformarsi in un mosaico di colori vibranti che fluttuano nel vuoto. Mentre la nave accelera, le scie dorate delle Power Moons illuminano il cielo, facendo sfumare i deserti infuocati nei ghiacciai azzurri e nelle foreste meccaniche. È un istante di quiete magica, sospeso tra il ricordo delle avventure appena vissute e il profilo di un nuovo, misterioso orizzonte che inizia a delinearsi tra le nuvole.");
+            }
+            else if (Mappa[3] == "Viaggio")
+            {
+                Console.WriteLine("Dall’oblò della Odyssey, Mario osserva le colossali travi di ferro rosso del Bosco Silenzioso emergere tra la nebbia fitta e i rami millenari. Mentre la nave scende di quota, la vegetazione selvaggia avvolge le vecchie macchine arrugginite, creando un contrasto unico tra natura e tecnologia. È un atterraggio suggestivo, accompagnato dal ronzio dei robot giardinieri che guardano insù, pronti ad accoglierlo nel cuore verde e meccanico del regno.");
+            }
+            else if (Mappa[5] == "viaggio")
             {
                 Console.WriteLine("L'Odyssey si alza in volo. Mario osserva il Regno Bosco Solitario che si trasforma rapidamente in un intricato tappeto. Vede il forte contrasto tra il verde brillante delle fitte foreste di alberi squadrati e il grigio-acciaio delle strutture meccaniche. Le torri sottili dei Legnamici e le vene metalliche dei ponti aerei si rimpiccioliscono, fondendosi in un unico, sorprendente mosaico di natura ed ingegneria. Il lago scuro e le cime rocciose, dove riposa il Boss Robo-Pianta, scompaiono nella nebbia mentre l'Odyssey punta al prossimo orizzonte.");
             }
-            else if(Mappa[6] == "viaggio")
+            else if (Mappa[6] == "viaggio")
             {
-                Console.WriteLine("L'Odyssey rompe il cielo, lasciando New Donk City sotto di sé. Mario vede un mare infinito di grattacieli lucidi che sembrano blocchi di LEGO futuristici. Le strade, fitte di taxi gialli e veicoli che si muovono come formiche, diventano sottili nastri di luce nel cemento.");
+                Console.WriteLine("Dall’oblò della Odyssey, Mario osserva le imponenti travi di ferro rosso del Regno della Selva emergere tra le fronde dei pini giganti. Mentre la nave scende di quota, il riflesso delle Power Moons scintilla sui macchinari coperti di muschio, mescolando il vapore delle vecchie fabbriche con l'aria fresca e carica di ossigeno del sottobosco. È un momento di pura meraviglia, sospeso tra la maestosità della natura e il profilo del Bosco Silenzioso che si svela, misterioso e antico, sotto i suoi piedi.");
             }
-            else if(Mappa[8] == "viaggio")
+            else if (Mappa[8] == "viaggio")
             {
-                Console.WriteLine("L'Odyssey sale. Mario vede il Regno del Mare come una macchia scintillante di turchese e sabbia bianca. Dall'alto, il Palazzo Calice dorato brilla al centro. Sotto l'acqua cristallina, le formazioni di corallo rosa e arancione sono chiaramente visibili. L'intero regno si riduce a un gioiello abbagliante e tropicale che scompare rapidamente nell'azzurro.");
+                Console.WriteLine("Dopo una piccola ma brutta pausa la odissey torna a volare verso il prossimo mondo. Dall’oblò della Odyssey, Mario osserva le vette dei grattacieli di New Donk City emergere come giganti d'acciaio tra la nebbia e le nuvole. Mentre la nave scende, il riflesso dorato delle Power Moons danza sulle finestre illuminate e sulle insegne al neon, accendendo il grigio del cemento con una luce elettrica e vibrante. È un istante di pura eccitazione urbana, sospeso tra il silenzio del cielo e il battito frenetico della metropoli che lo attende, tra strade affollate e il ritmo del jazz che si sente già in lontananza.");
             }
-            else if(Mappa[10] == "viaggio")
+            else if (Mappa[10] == "viaggio")
             {
-                Console.WriteLine("L'Odyssey si allontana rapidamente. Mario guarda una terra di grigio metallico e scuro. Il paesaggio è un inferno industriale, dominato da una massiccia fortezza nera circondata da fiumi di lava arancione. Il regno si restringe, apparendo come un simbolo tetro e minaccioso che scompare rapidamente nell'oscurità.");
+                Console.WriteLine("Dall’oblò della Odyssey, Mario osserva le luci scintillanti di New Donk City farsi sempre più piccole mentre la metropoli scompare sotto un tappeto di nuvole. I profili d'acciaio dei grattacieli e le strade animate sfumano in un riflesso dorato, mentre l'eco del festival appena concluso lascia spazio al silenzio del cielo infinito. È un istante di dolce nostalgia, sospeso tra il calore della città appena salvata e il richiamo di un nuovo orizzonte che già brilla nel buio profondo dello spazio.");
             }
-
+            else if (Mappa[11] == "viaggio")
+            {
+                Console.WriteLine("Dall’oblò della Odyssey, Mario osserva le torri di Bruma emergere come isole di ghiaccio tra le nubi soffici e bianche. Mentre la nave scende, il riflesso azzurro delle Power Moons scintilla sui cristalli di ghiaccio e sulle superfici metalliche, creando un gioco di luci che danza con il freddo vento artico. È un momento di pura meraviglia glaciale, sospeso tra la quiete del cielo e il profilo scintillante di Bruma che si svela, misterioso e incantato, sotto i suoi piedi.");
+            }
+            else if (Mappa[13] == "viaggio")
+            {
+                Console.WriteLine("Dall’oblò della Odyssey, Mario osserva le colline a forma di cappello del Regno di Bruma svanire lentamente tra banchi di nebbia argentea. Le sagome eleganti delle case a cilindro si confondono in un panorama monocromatico, mentre il luccichio delle Power Moons taglia l'atmosfera ovattata con bagliori magici. È un istante di profonda gratitudine, sospeso tra il ricordo del luogo dove tutto è iniziato insieme a Cappy e l’entusiasmo per il viaggio che lo porterà finalmente lontano da quel mondo di spettri e di vento.");
+            }
+            else if (Mappa[15] == "viaggio")
+            {
+                Console.WriteLine("Dall’oblò della Odyssey, Mario osserva le rovine spettrali di Tirannia svanire tra i lampi violacei e i pesanti banchi di nubi oscure. La sagoma della torre distrutta e il ricordo del drago leggendario si rimpiccioliscono, mentre il bagliore delle Power Moons squarcia l'atmosfera elettrica di quel regno dimenticato. È un istante di sollievo e mistero, sospeso tra l'oscurità di quelle terre tormentate e la luce di un nuovo orizzonte che già promette pace e colori ritrovati.");
+            }
+            else if(Mappa[16] == "viaggio")
+            {
+                Console.WriteLine("Dall’oblò della Odyssey, Mario osserva l'infinito trasformarsi in un flusso ipnotico di colori e polvere di stelle. Mentre la nave corre veloce, le scie dorate delle Power Moons illuminano il vuoto, fondendo i ricordi dei regni visitati in un unico, vibrante caleidoscopio di luce che danza sul vetro. È un istante di pace sospesa, in cui il silenzio del viaggio lo separa dalle fatiche passate e lo prepara allo stupore di un nuovo, incredibile orizzonte che sta già iniziando a brillare tra le nuvole cosmiche.");
+            }
+            else if (Mappa[17] == "viaggio")
+            {
+                Console.WriteLine("Dall’oblò della Odyssey, Mario osserva le costellazioni sfrecciare via come linee di luce, mentre la nave punta dritta verso il bagliore minaccioso del covo di Bowser. Il riflesso dorato delle ultime Power Moons raccolte illumina il suo sguardo serio e determinato, che già scruta l'orizzonte in cerca della sagoma del galeone nemico. È un istante di solenne concentrazione, sospeso tra la quiete del vuoto siderale e l'adrenalina per la battaglia finale che deciderà, una volta per tutte, il destino della Principessa Peach.");
+            }
         }
         static void Main(string[] args)
         {
             INTRO();
 
-            string[] Mappa = { "Fossilandia", "viaggio", "viaggio", "viaggio", "Bosco solitario", "viaggio", "viaggio", "Imprevisto", "New Dowk city", "viaggio", "viaggio", "Bruma", "viaggio", "Tirannia", "viaggio", "viaggio", "viaggio", "viaggio", "Bowser's Kingdom", "Viaggio con Peach" };
+            string[] Mappa = { "Fossilandia", "viaggio", "viaggio", "viaggio", "Bosco solitario", "EventoCasuale", "viaggio", "Imprevisto", "Viaggio", "New Dowk city", "EventoCasuale", "Viaggio", "Bruma", "viaggio", "Tirannia", "viaggio", "viaggio", "viaggio", "EventoCasuale", "Bowser's Kingdom", "Viaggio con Peach" };
 
             int Vita = 0, Attacco = 0, cavalcatura = 0, fioreDiFuoco = 0, PozioneCura = 0;
 
@@ -566,16 +890,42 @@ namespace ViaggioControBowser
 
             for (int i = 0; i < Mappa.Length; i++)
             {
-                if (i == 1)
+                TurnoDiGioco(Vita, Attacco, Personaggi(Vita, Attacco), PozioneCura, cavalcatura, fioreDiFuoco);
+                
+                if (cavalcatura >= 2)
+                {
+                    Console.WriteLine("Grazie alla tua cavalcatura completa, puoi viaggiare piu velocemente tra i vari mondi visto che ti aumenta il valore del dado avanza di 1!");
+                    Console.WriteLine("Vuoi usare la cavalcatura? (si/no)");
+                    string sceltaCavalcatura = Convert.ToString(Console.ReadLine());
+                    if (sceltaCavalcatura == "si")
+                    {
+                        Console.WriteLine("Usi la cavalcatura per viaggiare piu velocemente tra i vari mondi!");
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Non usi la cavalcatura e prosegui il viaggio normalmente.");
+
+                    }
+                }
+                if (i == 0)
                 {
                     Fossilandia(Personaggi(Vita, Attacco), Vita, Attacco, PozioneCura, cavalcatura);
                 }
-                else if( i == 4)
+                if (i == 1)
                 {
-
+                    Viaggio(Mappa);
                 }
+                else if (i == 4)
+                {
+                    BoscoSolitario(Personaggi(Vita, Attacco), Vita, Attacco, PozioneCura, cavalcatura);
+                }
+                else if(i == 9)
+                {
+                    NewDonkCity(Personaggi(Vita, Attacco), Vita, Attacco, PozioneCura);
+                }
+                
             }
         }
     }
 }
-
